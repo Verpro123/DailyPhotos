@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>some photos</title>
+    <style type="text/css">
+        * { padding: 0; margin: 0; }
+        body, html { height: 100%; width: 100%; overflow: hidden; }
+        body { background-image: url("images/background.jpg"); background-size: cover; }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: grid;
+            grid-template-rows: repeat(3, 1fr); /* 每行高度为屏幕的1/3 */
+            gap: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .row {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            gap: 10px;
+            width: calc((100vw / 4 + 10px) * 10 - 10px); /* 10张图片的总宽度 */
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        .row div {
+            width: calc(100vw / 4 - 10px); /* 每张图片宽度为屏幕的1/4，减去间距 */
+            height: 100%; /* 占满行高，即屏幕高度的1/3 */
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .row img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-5 * (100vw / 4 + 10px))); } /* 滑动5张图片的距离 */
+        }
+
+        @keyframes rowFadeIn {
+            0% { opacity: 0; transform: translateX(-100%); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        #floating-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            font-family: Arial, sans-serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background: linear-gradient(45deg, #c0ebcf, #04f779, #a7eb13);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            opacity: 0;
+            animation: 
+                fadeIn 2s ease-in 5s forwards,
+                float 5s ease-in-out 7s infinite;
+            z-index: 10;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-20px); }
+            100% { transform: translate(-50%, -50%) translateY(0); }
+        }
+
+        #start-button {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 60px;
+            background: linear-gradient(45deg, #04f779, #a7eb13);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            line-height: 60px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: buttonFloat 3s ease-in-out infinite;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        #start-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes buttonFloat {
+            0% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-10px); }
+            100% { transform: translate(-50%, -50%) translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <button id="start-button">开始</button>
+
+    <div id="container">
+        <div class="row">
+            <div><img src="images/1.jpg" title="大钳11"/></div>
+            <div><img src="images/2.jpg" title="大钳22"/></div>
+            <div><img src="images/3.jpg" title="大钳33"/></div>
+            <div><img src="images/4.jpg" title="大钳44"/></div>
+            <div><img src="images/5.jpg" title="大钳55"/></div>
+            <div><img src="images/1.jpg" title="大钳11"/></div>
+            <div><img src="images/2.jpg" title="大钳22"/></div>
+            <div><img src="images/3.jpg" title="大钳33"/></div>
+            <div><img src="images/4.jpg" title="大钳44"/></div>
+            <div><img src="images/5.jpg" title="大钳55"/></div>
+        </div>
+        <div class="row">
+            <div><img src="images/6.jpg" title="大钳66"/></div>
+            <div><img src="images/7.jpg" title="大钳77"/></div>
+            <div><img src="images/8.jpg" title="大钳88"/></div>
+            <div><img src="images/9.jpg" title="大钳99"/></div>
+            <div><img src="images/10.jpg" title="大钳1010"/></div>
+            <div><img src="images/6.jpg" title="大钳66"/></div>
+            <div><img src="images/7.jpg" title="大钳77"/></div>
+            <div><img src="images/8.jpg" title="大钳88"/></div>
+            <div><img src="images/9.jpg" title="大钳99"/></div>
+            <div><img src="images/10.jpg" title="大钳1010"/></div>
+        </div>
+        <div class="row">
+            <div><img src="images/1.jpg" title="大钳11"/></div>
+            <div><img src="images/2.jpg" title="大钳22"/></div>
+            <div><img src="images/3.jpg" title="大钳33"/></div>
+            <div><img src="images/4.jpg" title="大钳44"/></div>
+            <div><img src="images/5.jpg" title="大钳55"/></div>
+            <div><img src="images/1.jpg" title="大钳11"/></div>
+            <div><img src="images/2.jpg" title="大钳22"/></div>
+            <div><img src="images/3.jpg" title="大钳33"/></div>
+            <div><img src="images/4.jpg" title="大钳44"/></div>
+            <div><img src="images/5.jpg" title="大钳55"/></div>
+        </div>
+    </div>
+
+    <div id="floating-text"></div>
+    <!-- <div class="hovertree"></div> -->
+    <audio id="bgm" src="bgm/1.mp3" loop></audio>
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.fireworks.js"></script>
+    <script type="text/javascript">
+        document.getElementById('start-button').addEventListener('click', function() {
+            this.style.display = 'none';
+            document.getElementById('container').style.display = 'grid';
+            document.getElementById('floating-text').style.display = 'block';
+            
+            const rows = document.querySelectorAll('.row');
+            rows.forEach((row, index) => {
+                row.style.animation = `rowFadeIn 4s ease-out ${index * 0.5}s forwards`;
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateX(0)';
+                    row.style.animation = 'slide 20s linear infinite';
+                }, (index * 500) + 4000);
+            });
+
+            var bgm = document.getElementById('bgm');
+            bgm.play().catch(error => {
+                console.log('Playback failed:', error);
+            });
+
+            $('.hovertree').fireworks({
+                sound: false,
+                opacity: 0.3,
+                width: '100%',
+                height: '100%'
+            });
+        });
+    </script>
+</body>
+</html>
