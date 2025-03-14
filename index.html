@@ -1,58 +1,114 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>some photos</title>
     <style type="text/css">
-        * { padding: 0; margin: 0; }
-        body, html { height: 100%; width: 100%; overflow: hidden; }
-        body { background-image: url("images/background.jpg"); background-size: cover; }
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-image: url("images/background.jpg");
+            background-size: cover;
+        }
 
         #container {
-            width: 100vw;
+            width: 100%;
             height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
             display: grid;
-            grid-template-rows: repeat(3, 1fr); /* 每行高度为屏幕的1/3 */
+            grid-template-rows: repeat(3, minmax(0, 1fr));
             gap: 10px;
             overflow: hidden;
             display: none;
+            box-sizing: border-box;
         }
 
         .row {
-            width: 100%;
-            height: 100%;
+            width: 200%;
+            /* 双倍宽度 */
+            height: 90%;
             display: flex;
             gap: 10px;
-            width: calc((100vw / 4 + 10px) * 10 - 10px); /* 10张图片的总宽度 */
             opacity: 0;
             transform: translateX(-100%);
+            overflow: hidden;
         }
 
+        /* 修改：每个图片容器占10%宽度 */
         .row div {
-            width: calc(100vw / 4 - 10px); /* 每张图片宽度为屏幕的1/4，减去间距 */
-            height: 100%; /* 占满行高，即屏幕高度的1/3 */
+            flex: 0 0 10%;
+            height: 100%;
             position: relative;
             flex-shrink: 0;
+            overflow: hidden;
         }
 
         .row img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
+            object-position: center center;
+            /* 从中心裁剪 */
             display: block;
+            border: 10px solid #ddd;
+            box-shadow: 0px 0px 0px 5px white,
+                0px 0px 0px 10px #aaa,
+                5px 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .row img:hover {
+            transform: scale(1.02) rotate(3deg);
+            /* 悬浮时略微放大并旋转 */
+        }
+
+        .row img::before {
+            content: "";
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+            /* 模拟胶带 */
         }
 
         @keyframes slide {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-5 * (100vw / 4 + 10px))); } /* 滑动5张图片的距离 */
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(calc(-100% + 100vw));
+            }
+
+            /* 滑动一个复制组的宽度 */
         }
 
         @keyframes rowFadeIn {
-            0% { opacity: 0; transform: translateX(-100%); }
-            100% { opacity: 1; transform: translateX(0); }
+            0% {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         #floating-text {
@@ -60,7 +116,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 60px;
+            font-size: clamp(30px, 5vw, 60px);
             font-family: Arial, sans-serif;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             background: linear-gradient(45deg, #c0ebcf, #04f779, #a7eb13);
@@ -68,7 +124,7 @@
             -webkit-background-clip: text;
             color: transparent;
             opacity: 0;
-            animation: 
+            animation:
                 fadeIn 2s ease-in 5s forwards,
                 float 5s ease-in-out 7s infinite;
             z-index: 10;
@@ -76,14 +132,27 @@
         }
 
         @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         @keyframes float {
-            0% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-20px); }
-            100% { transform: translate(-50%, -50%) translateY(0); }
+            0% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) translateY(-20px);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
         }
 
         #start-button {
@@ -91,16 +160,16 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 150px;
-            height: 60px;
+            width: clamp(100px, 15vw, 150px);
+            height: clamp(40px, 6vw, 60px);
             background: linear-gradient(45deg, #04f779, #a7eb13);
             border: none;
             border-radius: 30px;
             color: white;
-            font-size: 24px;
+            font-size: clamp(16px, 2.5vw, 24px);
             font-family: Arial, sans-serif;
             text-align: center;
-            line-height: 60px;
+            line-height: clamp(40px, 6vw, 60px);
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             z-index: 1000;
@@ -114,51 +183,106 @@
         }
 
         @keyframes buttonFloat {
-            0% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-10px); }
-            100% { transform: translate(-50%, -50%) translateY(0); }
+            0% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) translateY(-10px);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+        }
+
+        /* 媒体查询：如有需要响应式调整，仍保持每个容器10%宽 */
+        @media (max-width: 768px) {
+            .row div {
+                flex: 0 0 10%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .row div {
+                flex: 0 0 10%;
+            }
         }
     </style>
 </head>
+
 <body>
     <button id="start-button">开始</button>
 
     <div id="container">
         <div class="row">
-            <div><img src="images/1.jpg" title="大钳11"/></div>
-            <div><img src="images/2.jpg" title="大钳22"/></div>
-            <div><img src="images/3.jpg" title="大钳33"/></div>
-            <div><img src="images/4.jpg" title="大钳44"/></div>
-            <div><img src="images/5.jpg" title="大钳55"/></div>
-            <div><img src="images/1.jpg" title="大钳11"/></div>
-            <div><img src="images/2.jpg" title="大钳22"/></div>
-            <div><img src="images/3.jpg" title="大钳33"/></div>
-            <div><img src="images/4.jpg" title="大钳44"/></div>
-            <div><img src="images/5.jpg" title="大钳55"/></div>
+            <div><img src="images/1.jpg" title="大钳11" /></div>
+            <div><img src="images/2.jpg" title="大钳22" /></div>
+            <div><img src="images/3.jpg" title="大钳33" /></div>
+            <div><img src="images/4.jpg" title="大钳44" /></div>
+            <div><img src="images/5.jpg" title="大钳55" /></div>
+            <div><img src="images/6.jpg" title="大钳11" /></div>
+            <div><img src="images/7.jpg" title="大钳22" /></div>
+            <div><img src="images/8.jpg" title="大钳33" /></div>
+            <div><img src="images/9.jpg" title="大钳44" /></div>
+            <div><img src="images/10.jpg" title="大钳55" /></div>
+            <!-- 重复图片 -->
+            <div><img src="images/1.jpg" title="大钳11" /></div>
+            <div><img src="images/2.jpg" title="大钳22" /></div>
+            <div><img src="images/3.jpg" title="大钳33" /></div>
+            <div><img src="images/4.jpg" title="大钳44" /></div>
+            <div><img src="images/5.jpg" title="大钳55" /></div>
+            <div><img src="images/6.jpg" title="大钳11" /></div>
+            <div><img src="images/7.jpg" title="大钳22" /></div>
+            <div><img src="images/8.jpg" title="大钳33" /></div>
+            <div><img src="images/9.jpg" title="大钳44" /></div>
+            <div><img src="images/10.jpg" title="大钳55" /></div>
         </div>
         <div class="row">
-            <div><img src="images/6.jpg" title="大钳66"/></div>
-            <div><img src="images/7.jpg" title="大钳77"/></div>
-            <div><img src="images/8.jpg" title="大钳88"/></div>
-            <div><img src="images/9.jpg" title="大钳99"/></div>
-            <div><img src="images/10.jpg" title="大钳1010"/></div>
-            <div><img src="images/6.jpg" title="大钳66"/></div>
-            <div><img src="images/7.jpg" title="大钳77"/></div>
-            <div><img src="images/8.jpg" title="大钳88"/></div>
-            <div><img src="images/9.jpg" title="大钳99"/></div>
-            <div><img src="images/10.jpg" title="大钳1010"/></div>
+            <div><img src="images/11.jpg" title="大钳66" /></div>
+            <div><img src="images/12.jpg" title="大钳77" /></div>
+            <div><img src="images/13.jpg" title="大钳88" /></div>
+            <div><img src="images/14.jpg" title="大钳99" /></div>
+            <div><img src="images/15.jpg" title="大钳1010" /></div>
+            <div><img src="images/16.jpg" title="大钳66" /></div>
+            <div><img src="images/17.jpg" title="大钳77" /></div>
+            <div><img src="images/18.jpg" title="大钳88" /></div>
+            <div><img src="images/19.jpg" title="大钳99" /></div>
+            <div><img src="images/20.jpg" title="大钳1010" /></div>
+            <!-- 重复图片 -->
+            <div><img src="images/11.jpg" title="大钳66" /></div>
+            <div><img src="images/12.jpg" title="大钳77" /></div>
+            <div><img src="images/13.jpg" title="大钳88" /></div>
+            <div><img src="images/14.jpg" title="大钳99" /></div>
+            <div><img src="images/15.jpg" title="大钳1010" /></div>
+            <div><img src="images/16.jpg" title="大钳66" /></div>
+            <div><img src="images/17.jpg" title="大钳77" /></div>
+            <div><img src="images/18.jpg" title="大钳88" /></div>
+            <div><img src="images/19.jpg" title="大钳99" /></div>
+            <div><img src="images/20.jpg" title="大钳1010" /></div>
         </div>
         <div class="row">
-            <div><img src="images/1.jpg" title="大钳11"/></div>
-            <div><img src="images/2.jpg" title="大钳22"/></div>
-            <div><img src="images/3.jpg" title="大钳33"/></div>
-            <div><img src="images/4.jpg" title="大钳44"/></div>
-            <div><img src="images/5.jpg" title="大钳55"/></div>
-            <div><img src="images/1.jpg" title="大钳11"/></div>
-            <div><img src="images/2.jpg" title="大钳22"/></div>
-            <div><img src="images/3.jpg" title="大钳33"/></div>
-            <div><img src="images/4.jpg" title="大钳44"/></div>
-            <div><img src="images/5.jpg" title="大钳55"/></div>
+            <div><img src="images/21.jpg" title="大钳11" /></div>
+            <div><img src="images/22.jpg" title="大钳22" /></div>
+            <div><img src="images/23.jpg" title="大钳33" /></div>
+            <div><img src="images/24.jpg" title="大钳44" /></div>
+            <div><img src="images/25.jpg" title="大钳55" /></div>
+            <div><img src="images/26.jpg" title="大钳11" /></div>
+            <div><img src="images/27.jpg" title="大钳22" /></div>
+            <div><img src="images/28.jpg" title="大钳33" /></div>
+            <div><img src="images/29.jpg" title="大钳44" /></div>
+            <div><img src="images/30.jpg" title="大钳55" /></div>
+            <!-- 重复图片 -->
+            <div><img src="images/21.jpg" title="大钳11" /></div>
+            <div><img src="images/22.jpg" title="大钳22" /></div>
+            <div><img src="images/23.jpg" title="大钳33" /></div>
+            <div><img src="images/24.jpg" title="大钳44" /></div>
+            <div><img src="images/25.jpg" title="大钳55" /></div>
+            <div><img src="images/26.jpg" title="大钳11" /></div>
+            <div><img src="images/27.jpg" title="大钳22" /></div>
+            <div><img src="images/28.jpg" title="大钳33" /></div>
+            <div><img src="images/29.jpg" title="大钳44" /></div>
+            <div><img src="images/30.jpg" title="大钳55" /></div>
         </div>
     </div>
 
@@ -169,19 +293,34 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.fireworks.js"></script>
     <script type="text/javascript">
-        document.getElementById('start-button').addEventListener('click', function() {
+        document.getElementById('start-button').addEventListener('click', function () {
             this.style.display = 'none';
             document.getElementById('container').style.display = 'grid';
             document.getElementById('floating-text').style.display = 'block';
-            
+
             const rows = document.querySelectorAll('.row');
             rows.forEach((row, index) => {
                 row.style.animation = `rowFadeIn 4s ease-out ${index * 0.5}s forwards`;
                 setTimeout(() => {
                     row.style.opacity = '1';
                     row.style.transform = 'translateX(0)';
-                    row.style.animation = 'slide 30s linear infinite';
+                    // 设置滑动动画，无停顿
+                    row.style.animation = `slide ${12 + index}s linear infinite`;
                 }, (index * 500) + 4000);
+            });
+            document.querySelectorAll('.row img').forEach(img => {
+                img.addEventListener('wheel', function (event) {
+                    event.preventDefault();
+                    let scale = parseFloat(this.dataset.scale) || 1;
+                    scale += event.deltaY * -0.001;
+                    scale = Math.min(Math.max(0.5, scale), 2);
+                    this.style.transform = `scale(${scale})`;
+                    this.dataset.scale = scale;
+                });
+                img.addEventListener('mouseleave', function () {
+                    this.style.transform = 'scale(1)';
+                    this.dataset.scale = 1;
+                });
             });
 
             var bgm = document.getElementById('bgm');
@@ -198,4 +337,5 @@
         });
     </script>
 </body>
+
 </html>
