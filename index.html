@@ -1,140 +1,99 @@
 <!DOCTYPE html>
 <html>
-
 <head lang="en">
     <meta charset="UTF-8">
     <title>some photos</title>
     <style type="text/css">
         /* 重置默认样式 */
-        * {
-            padding: 0;
-            margin: 0;
-        }
-
-        body,
-        html {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        body {
-            background-image: url("images/background.jpg");
-            background-size: cover;
-        }
+        * { padding: 0; margin: 0; }
+        body, html { height: 100%; width: 100%; overflow: hidden; }
+        body { background-image: url("images/background.jpg"); background-size: cover; }
 
         /* 图片容器样式 */
-        #container {
-            width: 100%;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: grid;
-            grid-template-rows: repeat(3, minmax(0, 1fr));
-            gap: 8px;
-            overflow: hidden;
-            display: none;
-            box-sizing: border-box;
+        #container { 
+            width: 100%; 
+            height: 100vh; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            display: grid; 
+            grid-template-rows: repeat(3, minmax(0, 1fr)); 
+            gap: 8px; 
+            overflow: hidden; 
+            display: none; 
+            box-sizing: border-box; 
         }
-
-        .row {
-            width: 200%;
-            height: 100%;
-            display: flex;
-            gap: 5px;
-            opacity: 0;
-            transform: translateX(-100%);
-            overflow: hidden;
+        .row { 
+            width: 200%; 
+            height: 100%; 
+            display: flex; 
+            gap: 5px; 
+            opacity: 0; 
+            transform: translateX(-100%); 
+            overflow: hidden; 
         }
-
-        .row div {
-            flex: 0 0 10%;
-            height: 100%;
-            position: relative;
-            flex-shrink: 0;
-            overflow: hidden;
-            padding: 10px;
-            box-sizing: border-box;
+        .row div { 
+            flex: 0 0 10%; 
+            height: 100%; 
+            position: relative; 
+            flex-shrink: 0; 
+            overflow: hidden; 
+            padding: 10px; 
+            box-sizing: border-box; 
         }
-
-        .row img {
-            width: 85%;
-            height: 85%;
-            object-fit: cover;
-            object-position: center center;
-            display: block;
-            border: 10px solid #ddd;
-            box-shadow: 0px 0px 0px 5px white, 0px 0px 0px 10px #aaa, 5px 5px 15px rgba(0, 0, 0, 0.5);
+        .row img { 
+            width: 85%; 
+            height: 85%; 
+            object-fit: cover; 
+            object-position: center center; 
+            display: block; 
+            border: 10px solid #ddd; 
+            box-shadow: 0px 0px 0px 5px white, 0px 0px 0px 10px #aaa, 5px 5px 15px rgba(0, 0, 0, 0.5); 
         }
-
-        .row img:hover {
-            transform: scale(1.02) rotate(3deg);
+        .row img:hover { 
+            transform: scale(1.02) rotate(3deg); 
         }
 
         /* 动画定义 */
-        @keyframes slide {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(calc(-100% + 100vw));
-            }
+        @keyframes slide { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(calc(-100% + 100vw)); } 
         }
-
-        @keyframes rowFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateX(-100%);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        @keyframes rowFadeIn { 
+            0% { opacity: 0; transform: translateX(-100%); } 
+            100% { opacity: 1; transform: translateX(0); } 
         }
 
         /* 开始按钮样式 */
-        #start-button {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: clamp(100px, 15vw, 150px);
-            height: clamp(40px, 6vw, 60px);
-            background: linear-gradient(45deg, #04f779, #a7eb13);
-            border: none;
-            border-radius: 30px;
-            color: white;
-            font-size: clamp(16px, 2.5vw, 24px);
-            font-family: Arial, sans-serif;
-            text-align: center;
-            line-height: clamp(40px, 6vw, 60px);
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            animation: buttonFloat 3s ease-in-out infinite;
-            transition: transform 0.3s, box-shadow 0.3s;
+        #start-button { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: clamp(100px, 15vw, 150px); 
+            height: clamp(40px, 6vw, 60px); 
+            background: linear-gradient(45deg, #04f779, #a7eb13); 
+            border: none; 
+            border-radius: 30px; 
+            color: white; 
+            font-size: clamp(16px, 2.5vw, 24px); 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            line-height: clamp(40px, 6vw, 60px); 
+            cursor: pointer; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
+            z-index: 1000; 
+            animation: buttonFloat 3s ease-in-out infinite; 
+            transition: transform 0.3s, box-shadow 0.3s; 
         }
-
-        #start-button:hover {
-            transform: translate(-50%, -50%) scale(1.1);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        #start-button:hover { 
+            transform: translate(-50%, -50%) scale(1.1); 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); 
         }
-
-        @keyframes buttonFloat {
-            0% {
-                transform: translate(-50%, -50%) translateY(0);
-            }
-
-            50% {
-                transform: translate(-50%, -50%) translateY(-10px);
-            }
-
-            100% {
-                transform: translate(-50%, -50%) translateY(0);
-            }
+        @keyframes buttonFloat { 
+            0% { transform: translate(-50%, -50%) translateY(0); } 
+            50% { transform: translate(-50%, -50%) translateY(-10px); } 
+            100% { transform: translate(-50%, -50%) translateY(0); } 
         }
 
         /* 黑胶风格音乐播放器样式 */
@@ -147,7 +106,6 @@
             align-items: center;
             z-index: 1000;
         }
-
         #vinyl {
             width: 100px;
             height: 100px;
@@ -157,7 +115,6 @@
             animation: spin 8s linear infinite;
             animation-play-state: paused;
         }
-
         #label {
             width: 60px;
             height: 60px;
@@ -177,11 +134,9 @@
             white-space: nowrap;
             padding: 5px;
         }
-
         #controls {
             margin-top: 10px;
         }
-
         #controls button {
             background: none;
             border: none;
@@ -191,11 +146,9 @@
             outline: none;
             color: #fff;
         }
-
         #controls button:hover {
             color: #04f779;
         }
-
         #current-song {
             font-family: Arial, sans-serif;
             font-size: 14px;
@@ -206,15 +159,9 @@
             white-space: nowrap;
             color: #fff;
         }
-
         @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         /* 气泡效果样式 */
@@ -223,27 +170,14 @@
             width: 10px;
             height: 10px;
             background-color: #f5f900;
-            /* 蓝色气泡 */
             border-radius: 50%;
             pointer-events: none;
-            /* 防止干扰鼠标事件 */
             animation: bubble 2s ease-out forwards;
             z-index: 500;
-            /* 确保在图片和按钮之下，但在背景之上 */
         }
-
         @keyframes bubble {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(2) translateX(200px);
-                /* 向you浮动并放大 */
-                opacity: 0;
-                /* 逐渐消失 */
-            }
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2) translateX(200px); opacity: 0; }
         }
     </style>
 </head>
@@ -340,7 +274,6 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.fireworks.js"></script>
     <script type="text/javascript">
-        // 替换为你自己的网易云音乐歌单ID
         const playlistId = '3228578605';
 
         let playlist = [];
@@ -352,7 +285,6 @@
         const currentSongDisplay = document.getElementById('current-song');
         const label = document.getElementById('label');
 
-        // 从网易云音乐API获取歌单数据
         async function fetchPlaylist() {
             const apiUrl = `https://netease-cloud-music-api.vercel.app/playlist/detail?id=${playlistId}`;
             try {
@@ -369,7 +301,6 @@
             }
         }
 
-        // 加载并播放歌曲
         function loadSong(index) {
             audio.src = playlist[index].url;
             currentSongDisplay.textContent = playlist[index].title;
@@ -378,7 +309,6 @@
             playSong();
         }
 
-        // 播放控制
         function togglePlayPause() {
             if (audio.paused) {
                 playSong();
@@ -388,9 +318,19 @@
         }
 
         function playSong() {
-            audio.play().catch(error => console.log('播放失败:', error));
-            playPauseBtn.textContent = '⏸';
-            document.getElementById('vinyl').style.animationPlayState = 'running';
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        playPauseBtn.textContent = '⏸';
+                        document.getElementById('vinyl').style.animationPlayState = 'running';
+                    })
+                    .catch(error => {
+                        console.log('播放失败:', error);
+                        currentSongDisplay.textContent = `歌曲播放失败，切换到下一首`; // 显示提示
+                        setTimeout(nextSong, 500); // 延迟500ms后切换到下一首，避免频繁切换
+                    });
+            }
         }
 
         function pauseSong() {
@@ -399,7 +339,6 @@
             document.getElementById('vinyl').style.animationPlayState = 'paused';
         }
 
-        // 切换歌曲
         function nextSong() {
             currentSongIndex = (currentSongIndex + 1) % playlist.length;
             loadSong(currentSongIndex);
@@ -410,7 +349,6 @@
             loadSong(currentSongIndex);
         }
 
-        // 开始按钮点击事件
         document.getElementById('start-button').addEventListener('click', function () {
             this.style.display = 'none';
             document.getElementById('container').style.display = 'grid';
@@ -426,7 +364,6 @@
                 }, (index * 500) + 4000);
             });
 
-            // 图片缩放功能
             document.querySelectorAll('.row img').forEach(img => {
                 img.addEventListener('wheel', function (event) {
                     event.preventDefault();
@@ -442,10 +379,8 @@
                 });
             });
 
-            // 获取并播放歌单
             fetchPlaylist();
 
-            // 烟花效果
             $('.hovertree').fireworks({
                 sound: false,
                 opacity: 0.3,
@@ -454,24 +389,21 @@
             });
         });
 
-        // 播放器控制事件
         playPauseBtn.addEventListener('click', togglePlayPause);
         nextBtn.addEventListener('click', nextSong);
         prevBtn.addEventListener('click', prevSong);
         audio.addEventListener('ended', nextSong);
 
-        // 鼠标移动生成气泡效果
         document.addEventListener('mousemove', function (e) {
             const bubble = document.createElement('div');
             bubble.className = 'bubble';
-            bubble.style.left = `${e.clientX - 5}px`; // 居中调整
+            bubble.style.left = `${e.clientX - 5}px`;
             bubble.style.top = `${e.clientY - 5}px`;
             document.body.appendChild(bubble);
             setTimeout(() => {
                 bubble.remove();
-            }, 1500); // 动画结束后移除
+            }, 1500);
         });
     </script>
 </body>
-
 </html>
