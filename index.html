@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>some photos</title>
     <style type="text/css">
+        /* 重置默认样式 */
         * {
             padding: 0;
             margin: 0;
@@ -22,6 +23,7 @@
             background-size: cover;
         }
 
+        /* 图片容器样式 */
         #container {
             width: 100%;
             height: 100vh;
@@ -38,7 +40,6 @@
 
         .row {
             width: 200%;
-            /* 双倍宽度 */
             height: 100%;
             display: flex;
             gap: 5px;
@@ -47,15 +48,14 @@
             overflow: hidden;
         }
 
-        /* 修改：每个图片容器占10%宽度 */
         .row div {
             flex: 0 0 10%;
             height: 100%;
             position: relative;
             flex-shrink: 0;
             overflow: hidden;
-            padding: 10px; /* 添加内边距 */
-            box-sizing: border-box; /* 确保内边距不会增加容器尺寸 */
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .row img {
@@ -63,32 +63,16 @@
             height: 85%;
             object-fit: cover;
             object-position: center center;
-            /* 从中心裁剪 */
             display: block;
             border: 10px solid #ddd;
-            box-shadow: 0px 0px 0px 5px white,
-                0px 0px 0px 10px #aaa,
-                5px 5px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0px 0px 0px 5px white, 0px 0px 0px 10px #aaa, 5px 5px 15px rgba(0, 0, 0, 0.5);
         }
 
         .row img:hover {
             transform: scale(1.02) rotate(3deg);
-            /* 悬浮时略微放大并旋转 */
         }
 
-        .row img::before {
-            content: "";
-            position: absolute;
-            width: 40px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.7);
-            top: -0;
-            left: 50%;
-            transform: translateX(-50%);
-            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
-            /* 模拟胶带 */
-        }
-
+        /* 动画定义 */
         @keyframes slide {
             0% {
                 transform: translateX(0);
@@ -97,8 +81,6 @@
             100% {
                 transform: translateX(calc(-100% + 100vw));
             }
-
-            /* 滑动一个复制组的宽度 */
         }
 
         @keyframes rowFadeIn {
@@ -113,50 +95,7 @@
             }
         }
 
-        #floating-text {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: clamp(30px, 5vw, 60px);
-            font-family: Arial, sans-serif;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            background: linear-gradient(45deg, #c0ebcf, #04f779, #a7eb13);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            opacity: 0;
-            animation:
-                fadeIn 2s ease-in 5s forwards,
-                float 5s ease-in-out 7s infinite;
-            z-index: 10;
-            display: none;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
-        @keyframes float {
-            0% {
-                transform: translate(-50%, -50%) translateY(0);
-            }
-
-            50% {
-                transform: translate(-50%, -50%) translateY(-20px);
-            }
-
-            100% {
-                transform: translate(-50%, -50%) translateY(0);
-            }
-        }
-
+        /* 开始按钮样式 */
         #start-button {
             position: fixed;
             top: 50%;
@@ -198,24 +137,122 @@
             }
         }
 
-        /* 媒体查询：如有需要响应式调整，仍保持每个容器10%宽 */
-        @media (max-width: 768px) {
-            .row div {
-                flex: 0 0 10%;
+        /* 黑胶风格音乐播放器样式 */
+        #music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #vinyl {
+            width: 100px;
+            height: 100px;
+            background-color: #121212;
+            border-radius: 50%;
+            position: relative;
+            animation: spin 8s linear infinite;
+            animation-play-state: paused;
+        }
+
+        #label {
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            border-radius: 80%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 5px;
+        }
+
+        #controls {
+            margin-top: 10px;
+        }
+
+        #controls button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            outline: none;
+            color: #fff;
+        }
+
+        #controls button:hover {
+            color: #04f779;
+        }
+
+        #current-song {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin-top: 10px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #fff;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
             }
         }
 
-        @media (max-width: 480px) {
-            .row div {
-                flex: 0 0 10%;
+        /* 气泡效果样式 */
+        .bubble {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f5f900;
+            /* 蓝色气泡 */
+            border-radius: 50%;
+            pointer-events: none;
+            /* 防止干扰鼠标事件 */
+            animation: bubble 2s ease-out forwards;
+            z-index: 500;
+            /* 确保在图片和按钮之下，但在背景之上 */
+        }
+
+        @keyframes bubble {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2) translateX(200px);
+                /* 向you浮动并放大 */
+                opacity: 0;
+                /* 逐渐消失 */
             }
         }
     </style>
 </head>
 
 <body>
+    <!-- 开始按钮 -->
     <button id="start-button">开始</button>
 
+    <!-- 图片容器 -->
     <div id="container">
         <div class="row">
             <div><img src="images/1.jpg" title="大钳11" /></div>
@@ -228,53 +265,50 @@
             <div><img src="images/8.jpg" title="大钳33" /></div>
             <div><img src="images/9.jpg" title="大钳44" /></div>
             <div><img src="images/10.jpg" title="大钳55" /></div>
-            <!-- 重复图片 -->
-            <div><img src="images/1.jpg" title="大钳11" /></div>
-            <div><img src="images/2.jpg" title="大钳22" /></div>
-            <div><img src="images/3.jpg" title="大钳33" /></div>
-            <div><img src="images/4.jpg" title="大钳44" /></div>
-            <div><img src="images/5.jpg" title="大钳55" /></div>
-            <div><img src="images/6.jpg" title="大钳11" /></div>
-            <div><img src="images/7.jpg" title="大钳22" /></div>
-            <div><img src="images/8.jpg" title="大钳33" /></div>
-            <div><img src="images/9.jpg" title="大钳44" /></div>
-            <div><img src="images/10.jpg" title="大钳55" /></div>
+            <div><img src="images/11.jpg" title="大钳11" /></div>
+            <div><img src="images/12.jpg" title="大钳22" /></div>
+            <div><img src="images/13.jpg" title="大钳33" /></div>
+            <div><img src="images/14.jpg" title="大钳44" /></div>
+            <div><img src="images/15.jpg" title="大钳55" /></div>
+            <div><img src="images/16.jpg" title="大钳11" /></div>
+            <div><img src="images/17.jpg" title="大钳22" /></div>
+            <div><img src="images/18.jpg" title="大钳33" /></div>
+            <div><img src="images/19.jpg" title="大钳44" /></div>
+            <div><img src="images/20.jpg" title="大钳55" /></div>
         </div>
         <div class="row">
-            <div><img src="images/11.jpg" title="大钳66" /></div>
-            <div><img src="images/12.jpg" title="大钳77" /></div>
-            <div><img src="images/13.jpg" title="大钳88" /></div>
-            <div><img src="images/14.jpg" title="大钳99" /></div>
-            <div><img src="images/15.jpg" title="大钳1010" /></div>
-            <div><img src="images/16.jpg" title="大钳66" /></div>
-            <div><img src="images/17.jpg" title="大钳77" /></div>
-            <div><img src="images/18.jpg" title="大钳88" /></div>
-            <div><img src="images/19.jpg" title="大钳99" /></div>
-            <div><img src="images/20.jpg" title="大钳1010" /></div>
-            <!-- 重复图片 -->
-            <div><img src="images/11.jpg" title="大钳66" /></div>
-            <div><img src="images/12.jpg" title="大钳77" /></div>
-            <div><img src="images/13.jpg" title="大钳88" /></div>
-            <div><img src="images/14.jpg" title="大钳99" /></div>
-            <div><img src="images/15.jpg" title="大钳1010" /></div>
-            <div><img src="images/16.jpg" title="大钳66" /></div>
-            <div><img src="images/17.jpg" title="大钳77" /></div>
-            <div><img src="images/18.jpg" title="大钳88" /></div>
-            <div><img src="images/19.jpg" title="大钳99" /></div>
-            <div><img src="images/20.jpg" title="大钳1010" /></div>
+            <div><img src="images/21.jpg" title="大钳66" /></div>
+            <div><img src="images/22.jpg" title="大钳77" /></div>
+            <div><img src="images/23.jpg" title="大钳88" /></div>
+            <div><img src="images/24.jpg" title="大钳99" /></div>
+            <div><img src="images/25.jpg" title="大钳1010" /></div>
+            <div><img src="images/26.jpg" title="大钳66" /></div>
+            <div><img src="images/27.jpg" title="大钳77" /></div>
+            <div><img src="images/28.jpg" title="大钳88" /></div>
+            <div><img src="images/29.jpg" title="大钳99" /></div>
+            <div><img src="images/30.jpg" title="大钳1010" /></div>
+            <div><img src="images/1.jpg" title="大钳66" /></div>
+            <div><img src="images/2.jpg" title="大钳77" /></div>
+            <div><img src="images/3.jpg" title="大钳88" /></div>
+            <div><img src="images/4.jpg" title="大钳99" /></div>
+            <div><img src="images/5.jpg" title="大钳1010" /></div>
+            <div><img src="images/6.jpg" title="大钳66" /></div>
+            <div><img src="images/7.jpg" title="大钳77" /></div>
+            <div><img src="images/8.jpg" title="大钳88" /></div>
+            <div><img src="images/9.jpg" title="大钳99" /></div>
+            <div><img src="images/10.jpg" title="大钳1010" /></div>
         </div>
         <div class="row">
-            <div><img src="images/21.jpg" title="大钳11" /></div>
-            <div><img src="images/22.jpg" title="大钳22" /></div>
-            <div><img src="images/23.jpg" title="大钳33" /></div>
-            <div><img src="images/24.jpg" title="大钳44" /></div>
-            <div><img src="images/25.jpg" title="大钳55" /></div>
-            <div><img src="images/26.jpg" title="大钳11" /></div>
-            <div><img src="images/27.jpg" title="大钳22" /></div>
-            <div><img src="images/28.jpg" title="大钳33" /></div>
-            <div><img src="images/29.jpg" title="大钳44" /></div>
-            <div><img src="images/30.jpg" title="大钳55" /></div>
-            <!-- 重复图片 -->
+            <div><img src="images/11.jpg" title="大钳11" /></div>
+            <div><img src="images/12.jpg" title="大钳22" /></div>
+            <div><img src="images/13.jpg" title="大钳33" /></div>
+            <div><img src="images/14.jpg" title="大钳44" /></div>
+            <div><img src="images/15.jpg" title="大钳55" /></div>
+            <div><img src="images/16.jpg" title="大钳11" /></div>
+            <div><img src="images/17.jpg" title="大钳22" /></div>
+            <div><img src="images/18.jpg" title="大钳33" /></div>
+            <div><img src="images/19.jpg" title="大钳44" /></div>
+            <div><img src="images/20.jpg" title="大钳55" /></div>
             <div><img src="images/21.jpg" title="大钳11" /></div>
             <div><img src="images/22.jpg" title="大钳22" /></div>
             <div><img src="images/23.jpg" title="大钳33" /></div>
@@ -288,17 +322,99 @@
         </div>
     </div>
 
-    <div id="floating-text"></div>
-    <!-- <div class="hovertree"></div> -->
-    <audio id="bgm" src="bgm/fenekot - Mistletoe.mp3" loop></audio>
+    <!-- 音乐播放器 -->
+    <div id="music-player">
+        <div id="vinyl">
+            <div id="label"></div>
+        </div>
+        <div id="controls">
+            <button id="prev-btn">⏮</button>
+            <button id="play-pause-btn">▶️</button>
+            <button id="next-btn">⏭</button>
+        </div>
+        <span id="current-song"></span>
+    </div>
+    <audio id="bgm" preload="auto"></audio>
 
+    <!-- 依赖的外部脚本 -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.fireworks.js"></script>
     <script type="text/javascript">
+        // 替换为你自己的网易云音乐歌单ID
+        const playlistId = '3228578605';
+
+        let playlist = [];
+        let currentSongIndex = 0;
+        const audio = document.getElementById('bgm');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const currentSongDisplay = document.getElementById('current-song');
+        const label = document.getElementById('label');
+
+        // 从网易云音乐API获取歌单数据
+        async function fetchPlaylist() {
+            const apiUrl = `https://netease-cloud-music-api.vercel.app/playlist/detail?id=${playlistId}`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                playlist = data.playlist.tracks.map(track => ({
+                    url: `https://music.163.com/song/media/outer/url?id=${track.id}.mp3`,
+                    title: track.name + ' - ' + track.ar[0].name
+                }));
+                loadSong(currentSongIndex);
+            } catch (error) {
+                console.error('获取歌单失败:', error);
+                currentSongDisplay.textContent = '歌单加载失败';
+            }
+        }
+
+        // 加载并播放歌曲
+        function loadSong(index) {
+            audio.src = playlist[index].url;
+            currentSongDisplay.textContent = playlist[index].title;
+            label.textContent = playlist[index].title;
+            audio.load();
+            playSong();
+        }
+
+        // 播放控制
+        function togglePlayPause() {
+            if (audio.paused) {
+                playSong();
+            } else {
+                pauseSong();
+            }
+        }
+
+        function playSong() {
+            audio.play().catch(error => console.log('播放失败:', error));
+            playPauseBtn.textContent = '⏸';
+            document.getElementById('vinyl').style.animationPlayState = 'running';
+        }
+
+        function pauseSong() {
+            audio.pause();
+            playPauseBtn.textContent = '▶️';
+            document.getElementById('vinyl').style.animationPlayState = 'paused';
+        }
+
+        // 切换歌曲
+        function nextSong() {
+            currentSongIndex = (currentSongIndex + 1) % playlist.length;
+            loadSong(currentSongIndex);
+        }
+
+        function prevSong() {
+            currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+            loadSong(currentSongIndex);
+        }
+
+        // 开始按钮点击事件
         document.getElementById('start-button').addEventListener('click', function () {
             this.style.display = 'none';
             document.getElementById('container').style.display = 'grid';
-            document.getElementById('floating-text').style.display = 'block';
+            document.getElementById('music-player').style.display = 'flex';
 
             const rows = document.querySelectorAll('.row');
             rows.forEach((row, index) => {
@@ -306,10 +422,11 @@
                 setTimeout(() => {
                     row.style.opacity = '1';
                     row.style.transform = 'translateX(0)';
-                    // 设置滑动动画，无停顿
                     row.style.animation = `slide ${12 + index}s linear infinite`;
                 }, (index * 500) + 4000);
             });
+
+            // 图片缩放功能
             document.querySelectorAll('.row img').forEach(img => {
                 img.addEventListener('wheel', function (event) {
                     event.preventDefault();
@@ -325,17 +442,34 @@
                 });
             });
 
-            var bgm = document.getElementById('bgm');
-            bgm.play().catch(error => {
-                console.log('Playback failed:', error);
-            });
+            // 获取并播放歌单
+            fetchPlaylist();
 
+            // 烟花效果
             $('.hovertree').fireworks({
                 sound: false,
                 opacity: 0.3,
                 width: '100%',
                 height: '100%'
             });
+        });
+
+        // 播放器控制事件
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        nextBtn.addEventListener('click', nextSong);
+        prevBtn.addEventListener('click', prevSong);
+        audio.addEventListener('ended', nextSong);
+
+        // 鼠标移动生成气泡效果
+        document.addEventListener('mousemove', function (e) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.style.left = `${e.clientX - 5}px`; // 居中调整
+            bubble.style.top = `${e.clientY - 5}px`;
+            document.body.appendChild(bubble);
+            setTimeout(() => {
+                bubble.remove();
+            }, 1500); // 动画结束后移除
         });
     </script>
 </body>
