@@ -64,12 +64,40 @@
             100% { opacity: 1; transform: translateX(0); } 
         }
 
-        /* 开始按钮样式 */
+        /* 开始按钮和输入框容器样式 */
+        #start-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        #playlist-id-input {
+            width: clamp(200px, 25vw, 300px);
+            height: clamp(30px, 5vw, 40px);
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: clamp(14px, 2vw, 18px);
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        #playlist-id-input:focus {
+            box-shadow: 0 5px 20px rgba(4, 247, 121, 0.5);
+            background: white;
+        }
+
         #start-button { 
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
             width: clamp(100px, 15vw, 150px); 
             height: clamp(40px, 6vw, 60px); 
             background: linear-gradient(45deg, #04f779, #a7eb13); 
@@ -82,18 +110,17 @@
             line-height: clamp(40px, 6vw, 60px); 
             cursor: pointer; 
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
-            z-index: 1000; 
             animation: buttonFloat 3s ease-in-out infinite; 
             transition: transform 0.3s, box-shadow 0.3s; 
         }
         #start-button:hover { 
-            transform: translate(-50%, -50%) scale(1.1); 
+            transform: scale(1.1); 
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); 
         }
         @keyframes buttonFloat { 
-            0% { transform: translate(-50%, -50%) translateY(0); } 
-            50% { transform: translate(-50%, -50%) translateY(-10px); } 
-            100% { transform: translate(-50%, -50%) translateY(0); } 
+            0% { transform: translateY(0); } 
+            50% { transform: translateY(-10px); } 
+            100% { transform: translateY(0); } 
         }
 
         /* 黑胶风格音乐播放器样式 */
@@ -168,17 +195,17 @@
         /* 歌词显示样式 */
         #lyrics-container {
             position: fixed;
-            bottom: 10px;
+            bottom: 40px;
             right: 20px;
             width: 250px;
-            height: 150px;
+            height: 900px;
             background: rgba(0, 0, 0, 0.4);
             border-radius: 10px;
             color: #fff;
             font-family: 'Arial', sans-serif;
             font-size: 16px;
-            overflow: hidden;
-            padding: 10px;
+            overflow: hidden; /* 移除滚动条 */
+            padding: 20px 10px;
             box-sizing: border-box;
             z-index: 1000;
             display: none;
@@ -187,6 +214,7 @@
         #lyrics {
             transition: transform 0.5s ease-out;
             position: relative;
+            padding-top: 50px; /* 额外顶部空间 */
         }
         #lyrics p {
             margin: 10px 0;
@@ -218,12 +246,70 @@
             0% { transform: scale(1); opacity: 1; }
             100% { transform: scale(2) translateX(200px); opacity: 0; }
         }
+
+        /* 滑块控件样式 */
+        #height-slider-container {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            width: 230px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        #height-slider {
+            width: 150px;
+            margin-right: 0px;
+            -webkit-appearance: none;
+            height: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        #height-slider:hover {
+            opacity: 1;
+        }
+
+        #height-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #04f779;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(4, 247, 121, 0.8);
+        }
+
+        #height-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            background: #04f779;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(4, 247, 121, 0.8);
+        }
+
+        #height-value {
+            color: #fff;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 
 <body>
-    <!-- 开始按钮 -->
-    <button id="start-button">开始</button>
+    <!-- 开始按钮和输入框容器 -->
+    <div id="start-container">
+        <input type="text" id="playlist-id-input" placeholder="请输入歌单ID" value="3228578605">
+        <button id="start-button">开始</button>
+    </div>
 
     <!-- 图片容器 -->
     <div id="container">
@@ -311,13 +397,17 @@
     <div id="lyrics-container">
         <div id="lyrics"></div>
     </div>
+    <!-- 歌词高度调整滑块 -->
+    <div id="height-slider-container">
+        <input type="range" id="height-slider" min="100" max="900" value="900">
+        <span id="height-value">900px</span>
+    </div>
     <audio id="bgm" preload="auto"></audio>
 
     <!-- 依赖的外部脚本 -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.fireworks.js"></script>
     <script type="text/javascript">
-        const playlistId = '3228578605';
         let playlist = [];
         let currentSongIndex = 0;
         let lyricsData = [];
@@ -330,21 +420,21 @@
         const lyricsContainer = document.getElementById('lyrics-container');
         const lyricsDiv = document.getElementById('lyrics');
 
-        async function fetchPlaylist() {
-            const apiUrl = `https://netease-cloud-music-api.vercel.app/playlist/detail?id=${playlistId}`;
+        async function fetchPlaylist(playlistId) {
+            const apiUrl = `https://netease-cloud-music-api.vercel.app/playlist/track/all?id=${playlistId}`;
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
-                playlist = data.playlist.tracks.map(track => ({
+                playlist = data.songs.map(track => ({
                     url: `https://music.163.com/song/media/outer/url?id=${track.id}.mp3`,
-                    title: track.name + ' - ' + track.ar[0].name,
+                    title: track.name + ' - ' + (track.ar[0]?.name || '未知艺术家'),
                     id: track.id
                 }));
                 console.log('歌单加载成功:', playlist);
                 loadSong(currentSongIndex);
             } catch (error) {
                 console.error('获取歌单失败:', error);
-                currentSongDisplay.textContent = '歌单加载失败';
+                currentSongDisplay.textContent = '歌单加载失败，请检查ID是否正确';
             }
         }
 
@@ -392,6 +482,12 @@
                 p.dataset.time = line.time;
                 lyricsDiv.appendChild(p);
             });
+            // 初始化时将第一行居中
+            if (lyricsData.length > 0) {
+                const firstLine = lyricsDiv.querySelector('p');
+                const offset = firstLine.offsetHeight / 2 + 20; // 20是额外的顶部偏移
+                lyricsDiv.style.transform = `translateY(${offset}px)`;
+            }
         }
 
         function updateLyrics() {
@@ -409,8 +505,19 @@
             lines.forEach(line => line.classList.remove('active'));
             if (activeIndex >= 0) {
                 lines[activeIndex].classList.add('active');
-                const offset = lines[activeIndex].offsetTop - lyricsContainer.offsetHeight / 2 + lines[activeIndex].offsetHeight / 2;
-                lyricsDiv.style.transform = `translateY(-${offset}px)`;
+                const lineHeight = lines[activeIndex].offsetHeight;
+                const containerHeight = lyricsContainer.offsetHeight;
+                const offset = lines[activeIndex].offsetTop - (containerHeight / 2) + (lineHeight / 2);
+                // 确保不会移到顶部以上
+                const minOffset = lineHeight / 2 + 20; // 保持顶部有空间
+                lyricsDiv.style.transform = `translateY(-${Math.max(offset, -minOffset)}px)`;
+            } else {
+                // 如果还没有激活的歌词，保持初始位置
+                const firstLine = lines[0];
+                if (firstLine) {
+                    const offset = firstLine.offsetHeight / 2 + 20;
+                    lyricsDiv.style.transform = `translateY(${offset}px)`;
+                }
             }
         }
 
@@ -471,7 +578,15 @@
         }
 
         document.getElementById('start-button').addEventListener('click', function () {
-            this.style.display = 'none';
+            const startContainer = document.getElementById('start-container');
+            const playlistId = document.getElementById('playlist-id-input').value.trim();
+            
+            if (!playlistId) {
+                alert('请输入有效的歌单ID');
+                return;
+            }
+
+            startContainer.style.display = 'none';
             document.getElementById('container').style.display = 'grid';
             document.getElementById('music-player').style.display = 'flex';
 
@@ -500,7 +615,7 @@
                 });
             });
 
-            fetchPlaylist();
+            fetchPlaylist(playlistId);
 
             $('.hovertree').fireworks({
                 sound: false,
@@ -525,6 +640,20 @@
                 bubble.remove();
             }, 1500);
         });
+
+        // 歌词高度调整
+        const heightSlider = document.getElementById('height-slider');
+        const heightValue = document.getElementById('height-value');
+        
+        heightSlider.addEventListener('input', function() {
+            const newHeight = this.value;
+            lyricsContainer.style.height = `${newHeight}px`;
+            heightValue.textContent = `${newHeight}px`;
+            updateLyrics();
+        });
+
+        // 初始化时设置默认高度
+        lyricsContainer.style.height = `${heightSlider.value}px`;
     </script>
 </body>
 </html>
