@@ -158,10 +158,49 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             color: #fff;
+            background: rgba(0, 0, 0, 0.4);
         }
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+
+        /* 歌词显示样式 */
+        #lyrics-container {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            width: 250px;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            overflow: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        #lyrics {
+            transition: transform 0.5s ease-out;
+            position: relative;
+        }
+        #lyrics p {
+            margin: 10px 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        #lyrics p.active {
+            color: transparent;
+            background: linear-gradient(90deg, #04f779, #00b7ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(4, 247, 121, 0.8);
         }
 
         /* 气泡效果样式 */
@@ -268,22 +307,28 @@
         </div>
         <span id="current-song"></span>
     </div>
+    <!-- 歌词显示 -->
+    <div id="lyrics-container">
+        <div id="lyrics"></div>
+    </div>
     <audio id="bgm" preload="auto"></audio>
 
     <!-- 依赖的外部脚本 -->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery.fireworks.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery.fireworks@1.0.0/jquery.fireworks.js"></script>
     <script type="text/javascript">
         const playlistId = '3228578605';
-
         let playlist = [];
         let currentSongIndex = 0;
+        let lyricsData = [];
         const audio = document.getElementById('bgm');
         const playPauseBtn = document.getElementById('play-pause-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const currentSongDisplay = document.getElementById('current-song');
         const label = document.getElementById('label');
+        const lyricsContainer = document.getElementById('lyrics-container');
+        const lyricsDiv = document.getElementById('lyrics');
 
         async function fetchPlaylist() {
             const apiUrl = `https://netease-cloud-music-api.vercel.app/playlist/detail?id=${playlistId}`;
@@ -292,8 +337,10 @@
                 const data = await response.json();
                 playlist = data.playlist.tracks.map(track => ({
                     url: `https://music.163.com/song/media/outer/url?id=${track.id}.mp3`,
-                    title: track.name + ' - ' + track.ar[0].name
+                    title: track.name + ' - ' + track.ar[0].name,
+                    id: track.id
                 }));
+                console.log('歌单加载成功:', playlist);
                 loadSong(currentSongIndex);
             } catch (error) {
                 console.error('获取歌单失败:', error);
@@ -301,11 +348,79 @@
             }
         }
 
+        async function fetchLyrics(songId) {
+            const apiUrl = `https://netease-cloud-music-api.vercel.app/lyric?id=${songId}`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const lrc = data.lrc ? data.lrc.lyric : '';
+                lyricsData = parseLyrics(lrc);
+                displayLyrics();
+                console.log('歌词加载成功:', lyricsData);
+            } catch (error) {
+                console.error('获取歌词失败:', error);
+                lyricsDiv.innerHTML = '<p>暂无歌词</p>';
+            }
+        }
+
+        function parseLyrics(lrc) {
+            if (!lrc) return [];
+            const lines = lrc.split('\n');
+            const lyrics = [];
+            const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+            lines.forEach(line => {
+                const match = line.match(timeRegex);
+                if (match) {
+                    const minutes = parseInt(match[1]);
+                    const seconds = parseInt(match[2]);
+                    const milliseconds = match[3].length === 2 ? parseInt(match[3]) * 10 : parseInt(match[3]);
+                    const time = minutes * 60 + seconds + milliseconds / 1000;
+                    const text = match[4].trim();
+                    if (text) {
+                        lyrics.push({ time, text });
+                    }
+                }
+            });
+            return lyrics.sort((a, b) => a.time - b.time);
+        }
+
+        function displayLyrics() {
+            lyricsDiv.innerHTML = '';
+            lyricsData.forEach(line => {
+                const p = document.createElement('p');
+                p.textContent = line.text;
+                p.dataset.time = line.time;
+                lyricsDiv.appendChild(p);
+            });
+        }
+
+        function updateLyrics() {
+            const currentTime = audio.currentTime;
+            const lines = lyricsDiv.querySelectorAll('p');
+            let activeIndex = -1;
+
+            lines.forEach((line, index) => {
+                const time = parseFloat(line.dataset.time);
+                if (currentTime >= time) {
+                    activeIndex = index;
+                }
+            });
+
+            lines.forEach(line => line.classList.remove('active'));
+            if (activeIndex >= 0) {
+                lines[activeIndex].classList.add('active');
+                const offset = lines[activeIndex].offsetTop - lyricsContainer.offsetHeight / 2 + lines[activeIndex].offsetHeight / 2;
+                lyricsDiv.style.transform = `translateY(-${offset}px)`;
+            }
+        }
+
         function loadSong(index) {
             audio.src = playlist[index].url;
             currentSongDisplay.textContent = playlist[index].title;
             label.textContent = playlist[index].title;
+            console.log('加载歌曲:', playlist[index].url);
             audio.load();
+            fetchLyrics(playlist[index].id);
             playSong();
         }
 
@@ -324,11 +439,14 @@
                     .then(() => {
                         playPauseBtn.textContent = '⏸';
                         document.getElementById('vinyl').style.animationPlayState = 'running';
+                        lyricsContainer.style.display = 'block';
+                        audio.addEventListener('timeupdate', updateLyrics);
+                        console.log('播放成功:', playlist[currentSongIndex].title);
                     })
                     .catch(error => {
-                        console.log('播放失败:', error);
-                        currentSongDisplay.textContent = `歌曲播放失败，切换到下一首`; // 显示提示
-                        setTimeout(nextSong, 500); // 延迟500ms后切换到下一首，避免频繁切换
+                        console.error('播放失败:', error);
+                        currentSongDisplay.textContent = `播放失败: ${error.message}`;
+                        setTimeout(nextSong, 1000);
                     });
             }
         }
@@ -337,6 +455,9 @@
             audio.pause();
             playPauseBtn.textContent = '▶️';
             document.getElementById('vinyl').style.animationPlayState = 'paused';
+            lyricsContainer.style.display = 'none';
+            audio.removeEventListener('timeupdate', updateLyrics);
+            console.log('暂停播放');
         }
 
         function nextSong() {
