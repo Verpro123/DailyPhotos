@@ -49,6 +49,7 @@
             display: block; 
             border: 10px solid #ddd; 
             box-shadow: 0px 0px 0px 5px white, 0px 0px 0px 10px #aaa, 5px 5px 15px rgba(0, 0, 0, 0.5); 
+            cursor: pointer;
         }
         .row img:hover { 
             transform: scale(1.02) rotate(3deg); 
@@ -361,13 +362,48 @@
             font-size: 14px;
             font-family: Arial, sans-serif;
         }
+
+        /* 图片放大样式 */
+        .image-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .enlarged-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border: 5px solid white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .enlarged-image.active {
+            transform: scale(1);
+        }
     </style>
 </head>
 
 <body>
     <!-- 开始按钮和输入框容器 -->
     <div id="start-container">
-        <input type="text" id="playlist-id-input" placeholder="请输入歌单ID" value="2585071675">
+        <input type="text" id="playlist-id-input" placeholder="请输入歌单ID" value="3228578605">
         <button id="start-button">开始</button>
     </div>
 
@@ -473,6 +509,12 @@
         <input type="range" id="height-slider" min="100" max="900" value="900">
         <span id="height-value">900px</span>
     </div>
+
+    <!-- 图片放大容器 -->
+    <div id="image-overlay" class="image-overlay">
+        <img id="enlarged-image" class="enlarged-image" src="" alt="Enlarged view">
+    </div>
+
     <audio id="bgm" preload="auto"></audio>
 
     <!-- 依赖的外部脚本 -->
@@ -494,6 +536,8 @@
         const playlistContainer = document.getElementById('playlist-container');
         const playlistContent = document.getElementById('playlist-content');
         const togglePlaylistBtn = document.getElementById('toggle-playlist-btn');
+        const imageOverlay = document.getElementById('image-overlay');
+        const enlargedImage = document.getElementById('enlarged-image');
 
         async function fetchPlaylist(playlistId) {
             const apiUrl = `https://netease-cloud-music-api.vercel.app/playlist/track/all?id=${playlistId}`;
@@ -611,7 +655,7 @@
                 playlistContent.appendChild(p);
             });
             playlistContainer.style.display = 'block';
-            playlistContent.classList.remove('collapsed'); // 确保默认展开
+            playlistContent.classList.remove('collapsed');
         }
 
         function updatePlaylistDisplay() {
@@ -689,6 +733,36 @@
             loadSong(currentSongIndex);
         }
 
+        function setupImageZoom() {
+            document.querySelectorAll('.row img').forEach(img => {
+                img.addEventListener('click', function() {
+                    enlargedImage.src = this.src;
+                    imageOverlay.classList.add('active');
+                    setTimeout(() => {
+                        enlargedImage.classList.add('active');
+                    }, 10);
+                });
+            });
+
+            imageOverlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    enlargedImage.classList.remove('active');
+                    setTimeout(() => {
+                        imageOverlay.classList.remove('active');
+                    }, 300);
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && imageOverlay.classList.contains('active')) {
+                    enlargedImage.classList.remove('active');
+                    setTimeout(() => {
+                        imageOverlay.classList.remove('active');
+                    }, 300);
+                }
+            });
+        }
+
         document.getElementById('start-button').addEventListener('click', function () {
             const startContainer = document.getElementById('start-container');
             const playlistId = document.getElementById('playlist-id-input').value.trim();
@@ -728,6 +802,7 @@
                 });
             });
 
+            setupImageZoom();
             fetchPlaylist(playlistId);
 
             $('.hovertree').fireworks({
