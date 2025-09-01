@@ -193,7 +193,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 歌词显示样式 */
+        /* 歌词显示样式 - 已注释掉
         #lyrics-container {
             position: fixed;
             bottom: 40px;
@@ -231,6 +231,7 @@
             transform: scale(1.1);
             text-shadow: 0 0 10px rgba(4, 247, 121, 0.8);
         }
+        */
 
         /* 歌单容器样式 */
         #playlist-container {
@@ -400,32 +401,38 @@
         /* 频谱可视化样式 */
         #spectrum-container {
             position: fixed;
-            bottom: 150px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
-            max-width: 600px;
-            height: 120px;
+            width: 98%;
+            max-width: 1200px;
+            height: 100px;
             display: none;
             z-index: 1000;
             pointer-events: none;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 10px;
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 25px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(114, 114, 114, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: row;
+            align-items: end;
+            gap: 2px;
+            overflow: hidden;
         }
         
         .spectrum-bar {
             display: inline-block;
-            width: 4px;
-            margin: 0 1px;
+            width: calc(100% / 64);
             background: linear-gradient(to top, 
                 rgba(4, 247, 121, 0.8), 
                 rgba(0, 183, 255, 0.8),
                 rgba(255, 0, 128, 0.8));
-            border-radius: 2px;
-            transition: height 0.05s ease-out;
-            box-shadow: 0 0 10px rgba(4, 247, 121, 0.6);
+            border-radius: 2px 2px 0 0;
+            transition: height 0.1s ease-out;
+            margin: 0 1px;
             transform-origin: bottom;
         }
         
@@ -567,10 +574,11 @@
         <span id="current-song"></span>
     </div>
 
-    <!-- 歌词显示 -->
+    <!-- 歌词显示 - 已注释掉
     <div id="lyrics-container">
         <div id="lyrics"></div>
     </div>
+    -->
 
     <!-- 歌单容器 -->
     <div id="playlist-container">
@@ -581,15 +589,16 @@
         <div id="playlist-content"></div>
     </div>
 
-    <!-- 歌词高度调整滑块 -->
+    <!-- 歌词高度调整滑块 - 已注释掉
     <div id="height-slider-container">
         <input type="range" id="height-slider" min="100" max="900" value="900">
         <span id="height-value">900px</span>
     </div>
+    -->
 
     <!-- 频谱可视化容器 -->
     <div id="spectrum-container"></div>
-    <button id="toggle-spectrum-btn">开启频谱</button>
+    <button id="toggle-spectrum-btn">ON</button>
 
     <!-- 图片放大容器 -->
     <div id="image-overlay" class="image-overlay">
@@ -612,8 +621,8 @@
         const nextBtn = document.getElementById('next-btn');
         const currentSongDisplay = document.getElementById('current-song');
         const label = document.getElementById('label');
-        const lyricsContainer = document.getElementById('lyrics-container');
-        const lyricsDiv = document.getElementById('lyrics');
+        // const lyricsContainer = document.getElementById('lyrics-container'); // 歌词功能已注释
+        // const lyricsDiv = document.getElementById('lyrics'); // 歌词功能已注释
         const playlistContainer = document.getElementById('playlist-container');
         const playlistContent = document.getElementById('playlist-content');
         const togglePlaylistBtn = document.getElementById('toggle-playlist-btn');
@@ -655,6 +664,8 @@
             }
         }
 
+        // 歌词相关功能已注释掉
+        /*
         async function fetchLyrics(songId) {
             const apiUrl = `https://netease-cloud-music-api.vercel.app/lyric?id=${songId}`;
             try {
@@ -734,6 +745,7 @@
                 }
             }
         }
+        */
 
         function displayPlaylist() {
             playlistContent.innerHTML = '';
@@ -785,7 +797,7 @@
             }
             
             audio.load();
-            fetchLyrics(playlist[index].id);
+            // fetchLyrics(playlist[index].id); // 歌词功能已注释
             playSong();
             updatePlaylistDisplay();
         }
@@ -805,8 +817,8 @@
                     .then(() => {
                         playPauseBtn.textContent = '⏸';
                         document.getElementById('vinyl').style.animationPlayState = 'running';
-                        lyricsContainer.style.display = 'block';
-                        audio.addEventListener('timeupdate', updateLyrics);
+                        // lyricsContainer.style.display = 'block'; // 歌词功能已注释
+                        // audio.addEventListener('timeupdate', updateLyrics); // 歌词功能已注释
                         console.log('播放成功:', playlist[currentSongIndex].title);
                     })
                     .catch(error => {
@@ -821,8 +833,8 @@
             audio.pause();
             playPauseBtn.textContent = '▶️';
             document.getElementById('vinyl').style.animationPlayState = 'paused';
-            lyricsContainer.style.display = 'none';
-            audio.removeEventListener('timeupdate', updateLyrics);
+            // lyricsContainer.style.display = 'none'; // 歌词功能已注释
+            // audio.removeEventListener('timeupdate', updateLyrics); // 歌词功能已注释
             console.log('暂停播放');
         }
 
@@ -926,6 +938,16 @@
         // 音频加载完成提示
         audio.addEventListener('loadeddata', function() {
             console.log('音频加载完成');
+            
+            // 如果频谱已激活，尝试创建分析器
+            if (isSpectrumActive && !analyser) {
+                setTimeout(() => {
+                    const success = createAudioAnalyser();
+                    if (!success) {
+                        console.log('在线音频频谱分析不可用，使用模拟模式');
+                    }
+                }, 100);
+            }
         });
 
         document.addEventListener('mousemove', function (e) {
@@ -952,7 +974,7 @@
         
         // 初始化频谱可视化
         function initSpectrum() {
-            const barCount = 128;
+            const barCount = 64;
             spectrumContainer.innerHTML = '';
             for (let i = 0; i < barCount; i++) {
                 const bar = document.createElement('div');
@@ -962,27 +984,42 @@
             }
         }
         
-        // 创建音频分析器 - 正确的实现
+        // 创建音频分析器 - 在线歌曲兼容版本
         function createAudioAnalyser() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
             
             try {
-                // 关键：在音频播放前创建分析器连接
+                // 确保音频上下文已激活
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
                 if (!analyser) {
                     analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 512;
-                    analyser.smoothingTimeConstant = 0.8;
+                    analyser.fftSize = 128;
+                    analyser.smoothingTimeConstant = 0.7;
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
                     
-                    // 创建音频源并连接
-                    const source = audioContext.createMediaElementSource(audio);
-                    source.connect(analyser);
-                    analyser.connect(audioContext.destination);
-                    
-                    console.log('音频分析器创建成功');
-                    return true;
+                    try {
+                        // 处理在线音频的CORS问题
+                        audio.crossOrigin = 'anonymous';
+                        
+                        // 创建音频源并连接
+                        const source = audioContext.createMediaElementSource(audio);
+                        source.connect(analyser);
+                        analyser.connect(audioContext.destination);
+                        
+                        console.log('音频分析器创建成功');
+                        return true;
+                    } catch (sourceError) {
+                        console.warn('音频源连接失败，尝试备用方案:', sourceError);
+                        // 清理分析器避免内存泄漏
+                        analyser = null;
+                        dataArray = null;
+                        return false;
+                    }
                 }
                 return true;
             } catch (error) {
@@ -991,55 +1028,90 @@
             }
         }
         
-        // 更新频谱 - 真实音频分析
+        // 更新频谱 - 智能音频分析（真实+模拟混合）
         function updateSpectrum() {
-            if (!isSpectrumActive || !analyser) return;
+            if (!isSpectrumActive) return;
             
-            analyser.getByteFrequencyData(dataArray);
             const bars = spectrumContainer.querySelectorAll('.spectrum-bar');
             
-            // 计算音频能量
-            let totalEnergy = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-                totalEnergy += dataArray[i];
-            }
-            const avgEnergy = totalEnergy / dataArray.length;
-            
-            bars.forEach((bar, index) => {
-                // 使用对数缩放让频谱更平滑
-                const logIndex = Math.floor(Math.pow(index / bars.length, 0.7) * dataArray.length);
-                const value = dataArray[logIndex] || 0;
-                
-                // 添加平滑动画效果
-                const targetHeight = (value / 255) * 100;
-                const currentHeight = parseFloat(bar.style.height) || 0;
-                const newHeight = currentHeight + (targetHeight - currentHeight) * 0.3;
-                
-                bar.style.height = `${Math.max(2, newHeight)}px`;
-                
-                // 动态颜色渐变 - 根据音频强度变化
-                const intensity = Math.min(1, avgEnergy / 128);
-                const hue = (index / bars.length) * 180 + 120;
-                const saturation = 50 + intensity * 50;
-                const lightness = 40 + intensity * 30;
-                
-                bar.style.background = `linear-gradient(to top, 
-                    hsl(${hue}, ${saturation}%, ${lightness}%), 
-                    hsl(${hue + 60}, ${saturation + 20}%, ${lightness + 20}%))`;
-                
-                // 动态发光效果
-                const glowIntensity = newHeight / 100;
-                bar.style.boxShadow = `0 0 ${glowIntensity * 15}px hsla(${hue}, 100%, 50%, ${glowIntensity})`;
-                
-                // 添加脉冲效果
-                if (newHeight > 80) {
-                    bar.classList.add('active');
-                    setTimeout(() => bar.classList.remove('active'), 100);
+            if (analyser && dataArray) {
+                // 真实音频分析
+                try {
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    // 计算音频能量
+                    let totalEnergy = 0;
+                    for (let i = 0; i < dataArray.length; i++) {
+                        totalEnergy += dataArray[i];
+                    }
+                    const avgEnergy = totalEnergy / dataArray.length;
+                    
+                    bars.forEach((bar, index) => {
+                        // 使用线性映射，适配64个频谱条
+                        const logIndex = Math.floor((index / bars.length) * dataArray.length);
+                        const value = dataArray[logIndex] || 0;
+                        
+                        updateBarVisual(bar, value, index, avgEnergy, bars.length);
+                    });
+                } catch (error) {
+                    console.warn('真实频谱获取失败，切换到模拟模式:', error);
+                    useSimulatedSpectrum(bars);
                 }
-            });
+            } else {
+                // 模拟音频律动（当真实分析失败时）
+                useSimulatedSpectrum(bars);
+            }
             
             animationId = requestAnimationFrame(updateSpectrum);
         }
+        
+        function updateBarVisual(bar, value, index, avgEnergy, total) {
+            // 添加平滑动画效果
+            const targetHeight = (value / 255) * 100;
+            const currentHeight = parseFloat(bar.style.height) || 0;
+            const newHeight = currentHeight + (targetHeight - currentHeight) * 0.3;
+            
+            bar.style.height = `${Math.max(2, newHeight)}px`;
+            
+            // 动态颜色渐变 - 根据音频强度变化
+            const intensity = Math.min(1, avgEnergy / 128);
+            const hue = (index / total) * 180 + 120;
+            const saturation = 50 + intensity * 50;
+            const lightness = 40 + intensity * 30;
+            
+            bar.style.background = `linear-gradient(to top, 
+                hsl(${hue}, ${saturation}%, ${lightness}%), 
+                hsl(${hue + 60}, ${saturation + 20}%, ${lightness + 20}%))`;
+            
+            // 动态发光效果
+            const glowIntensity = newHeight / 100;
+            bar.style.boxShadow = `0 0 ${glowIntensity * 15}px hsla(${hue}, 100%, 50%, ${glowIntensity})`;
+            
+            // 添加脉冲效果
+            if (newHeight > 80) {
+                bar.classList.add('active');
+                setTimeout(() => bar.classList.remove('active'), 100);
+            }
+        }
+        
+        function useSimulatedSpectrum(bars) {
+             const time = Date.now() * 0.005;
+             const audioPlaying = !audio.paused;
+             
+             bars.forEach((bar, i) => {
+                 let value = Math.sin(time + i * 0.2) * 30 + 50;
+                 
+                 if (audioPlaying) {
+                     value += Math.random() * 20;
+                     value *= 1.2;
+                 } else {
+                     value *= 0.5;
+                 }
+                 
+                 const avgEnergy = 64;
+                 updateBarVisual(bar, value, i, avgEnergy, bars.length);
+             });
+         }
         
         // 切换频谱显示 - 智能版本
         function toggleSpectrum() {
@@ -1063,13 +1135,13 @@
                 }
                 
                 spectrumContainer.style.display = 'block';
-                toggleSpectrumBtn.textContent = '关闭频谱';
+                toggleSpectrumBtn.textContent = 'OFF';
                 toggleSpectrumBtn.classList.add('active');
                 isSpectrumActive = true;
                 updateSpectrum();
             } else {
                 spectrumContainer.style.display = 'none';
-                toggleSpectrumBtn.textContent = '开启频谱';
+                toggleSpectrumBtn.textContent = 'ON';
                 toggleSpectrumBtn.classList.remove('active');
                 isSpectrumActive = false;
                 if (animationId) {
@@ -1078,6 +1150,7 @@
             }
         }
         
+        /*
         heightSlider.addEventListener('input', function() {
             const newHeight = this.value;
             lyricsContainer.style.height = `${newHeight}px`;
@@ -1086,6 +1159,7 @@
         });
 
         lyricsContainer.style.height = `${heightSlider.value}px`;
+        */
         
         // 初始化频谱
         initSpectrum();
